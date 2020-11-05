@@ -1,6 +1,7 @@
 package com.trainmodel
 
 import java.io.{File, FileNotFoundException}
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -13,6 +14,8 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 object StockTrainModel {
   val sparkSession: SparkSession =
     UtilityClass.createSparkSessionObject("StockTrainModel")
+  val awsAccessKeyID: String = System.getenv("AWS_ACCESS_KEY_ID")
+  val awsSecretAccessKey: String = System.getenv("AWS_SECRET_ACCESS_KEY")
 
   /***
     * Reads CSV file and Creates DataFrame
@@ -21,14 +24,22 @@ object StockTrainModel {
     */
   def readFileFromS3(filePath: String): DataFrame = {
     try {
-      Configuration(sparkSession.sparkContext).hadoopAwsConfiguration()
-      val csvDataDF = sparkSession.read
-        .option("header", value = true)
-        .csv(filePath)
+      val status = Configuration(sparkSession.sparkContext)
+        .hadoopAwsConfiguration(awsAccessKeyID, awsSecretAccessKey)
+      var csvDataDF = sparkSession.emptyDataFrame
+      if (status == 1) {
+        csvDataDF = sparkSession.read
+          .option("header", value = true)
+          .csv(filePath)
+      }
       csvDataDF
     } catch {
-      case _: org.apache.spark.sql.AnalysisException =>
+      case sqlException: org.apache.spark.sql.AnalysisException =>
         throw new FileNotFoundException("Please Check the Path")
+      case s3Exception: org.apache.hadoop.fs.s3.S3Exception =>
+        throw new Exception(
+          "Configuration not valid, Please provide required Credentials"
+        )
     }
   }
 

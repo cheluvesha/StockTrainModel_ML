@@ -7,14 +7,15 @@ import org.apache.spark.SparkContext
   * Dependencies included s3a
   * @param sparkContextObj SparkContext Type
   */
-case class Configuration(sparkContextObj: SparkContext) {
-  val awsAccessKeyID: String = System.getenv("AWS_ACCESS_KEY_ID")
-  val awsSecretAccessKey: String = System.getenv("AWS_SECRET_ACCESS_KEY")
+case class Configuration(sparkContextObj: SparkContext) extends Configure {
 
   /***
     * Configures Aws S3 with Credentials
     */
-  def hadoopAwsConfiguration(): Unit = {
+  def hadoopAwsConfiguration(
+      awsAccessKeyID: String,
+      awsSecretAccessKey: String
+  ): Int = {
     System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2")
     System.setProperty("com.amazonaws.services.s3.enableV4", "true")
     sparkContextObj.hadoopConfiguration
@@ -25,6 +26,14 @@ case class Configuration(sparkContextObj: SparkContext) {
       .set("fs.s3a.impl", "org.apache.hadoop.fs.s3native.NativeS3FileSystem")
     sparkContextObj.hadoopConfiguration
       .set("fs.s3a.endpoint", "s3.amazonaws.com")
+    1
   }
 
+}
+
+trait Configure {
+  def hadoopAwsConfiguration(
+      awsAccessKeyID: String,
+      awsSecretAccessKey: String
+  ): Int
 }
