@@ -1,13 +1,18 @@
 package com.trainmodel
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.scalatest.FunSuite
+import org.mockito.Mockito.when
+import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatestplus.mockito.MockitoSugar
 
 /***
   * StockTrainModelTest - Test the functionalities of StockTrainModel class
-  * Dependencies Used ScalaTest
+  * Dependencies Used ScalaTest and Mockito
   */
-class StockTrainModelTest extends FunSuite {
+class StockTrainModelTest
+    extends FunSuite
+    with BeforeAndAfter
+    with MockitoSugar {
 
   val sparkSession: SparkSession = SparkSession
     .builder()
@@ -88,4 +93,32 @@ class StockTrainModelTest extends FunSuite {
     assert(thrown.getMessage === "Please Check the Path, Upload is Failed")
   }
 
+  test("givenConfigureCredentialsShouldVerifyByMocking") {
+    val service = mock[Configure]
+    when(
+      service.hadoopAwsConfiguration(
+        System.getenv("AWS_ACCESS_KEY_ID"),
+        System.getenv("AWS_SECRET_ACCESS_KEY")
+      )
+    ).thenReturn(1)
+    when(
+      service.hadoopAwsConfiguration(
+        "123456",
+        "658"
+      )
+    ).thenReturn(-1)
+
+    val realCred = service.hadoopAwsConfiguration(
+      System.getenv("AWS_ACCESS_KEY_ID"),
+      System.getenv("AWS_SECRET_ACCESS_KEY")
+    )
+    val fakeCred = service.hadoopAwsConfiguration(
+      "123456",
+      "658"
+    )
+
+    // (4) verify the results
+    assert(realCred === 1)
+    assert(fakeCred === -1)
+  }
 }
