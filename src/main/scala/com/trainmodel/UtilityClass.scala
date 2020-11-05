@@ -3,15 +3,23 @@ package com.trainmodel
 import java.io.FileNotFoundException
 
 import awscala.s3.{Bucket, S3}
-import com.fellowship.UtilityClass.s3.bucket
 import org.apache.spark.sql.SparkSession
 import awscala._
-import com.amazonaws.services.s3.model.AmazonS3Exception
 
+/***
+  * Utility class provides required external utility functions
+  * Dependencies included are AmazonS3SDK and AWScala
+ ***/
 object UtilityClass {
 
   var bucketName: String = _
   implicit val s3: S3 = S3.at(Region.US_WEST_1)
+
+  /***
+    * Creates Spark Session object
+    * @param name - App Name
+    * @return SparkSession
+    */
   def createSparkSessionObject(name: String): SparkSession = {
     val spark = SparkSession
       .builder()
@@ -57,7 +65,7 @@ object UtilityClass {
       if (fileCheck) {
         val status = checkBucketExistsOrNot(bucketName)
         if (status) {
-          val bucketToPut: Bucket = bucket(bucketName).last
+          val bucketToPut: Bucket = s3.bucket(bucketName).last
           s3.putObject(
             bucketToPut,
             "StockPriceModel.pkl",

@@ -9,9 +9,6 @@ Library Used -
   Version - 3.8
 3> Sklearn [For Machine Learning Algorithms]
   Version - 0.23.2
-4> boto3 [For Uploading to S3]
-    Version -1.14.60
-@author : Niraj Kumar
 """
 
 
@@ -62,7 +59,7 @@ y_pred = lrModel.predict(X_test)
 rmse = np.sqrt(metrics.mean_squared_error(y_test,y_pred))
 print("The root mean square error is {:.2f}".format(rmse))
 avgValue = np.mean(y_test)
-print("The errorValue is {:.2f} %".format(rmse / avgValue ))
+print("The error Value is {:.2f} %".format(rmse / avgValue ))
 #Calling function to upload model to S3
 saveFileToPath(lrModel)
 

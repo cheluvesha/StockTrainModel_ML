@@ -3,7 +3,12 @@ package com.trainmodel
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.scalatest.FunSuite
 
+/***
+  * StockTrainModelTest - Test the functionalities of StockTrainModel class
+  * Dependencies Used ScalaTest
+  */
 class StockTrainModelTest extends FunSuite {
+
   val sparkSession: SparkSession = SparkSession
     .builder()
     .master("local[8]")
@@ -18,21 +23,24 @@ class StockTrainModelTest extends FunSuite {
   val csvDataDF: DataFrame = sparkSession.read
     .option("header", value = true)
     .csv(csvFilePath)
+
   test("givenCSVShouldReadAndValidateWithMainClassMethod") {
     val stockDF: DataFrame =
       stockTrainModel.readFileFromS3(s3URL)
     val dataFrameCompare = new DataFrameComparison
     assert(dataFrameCompare.compareDataFrames(csvDataDF, stockDF) === true)
   }
+
   test("givenWrongCSVShouldReturnFalseWhenCompared") {
-    val csvDataDF = sparkSession.read
+    val wrongCSVDF = sparkSession.read
       .option("header", value = true)
       .csv(wrongCSV)
     val stockDF: DataFrame =
       stockTrainModel.readFileFromS3(s3URL)
     val dataFrameCompare = new DataFrameComparison
-    assert(dataFrameCompare.compareDataFrames(csvDataDF, stockDF) === false)
+    assert(dataFrameCompare.compareDataFrames(wrongCSVDF, stockDF) === false)
   }
+
   test("givenWrongPathShouldThrownAnExceptionReadFunction") {
     val thrown = intercept[Exception] {
       stockTrainModel.readFileFromS3(wrongPath)
@@ -47,6 +55,7 @@ class StockTrainModelTest extends FunSuite {
       stockTrainModel.pipePythonFileWithScala(csvDataDF, pythonFile).collect()
     assert(pipedData === resultRDD)
   }
+
   test("givenPathToPerformPipeShouldNotEqualToExpected") {
     val pipeDataFile = "python3 " + pythonFile
     val pipedData = csvDataDF.rdd.pipe(pipeDataFile)
@@ -54,20 +63,24 @@ class StockTrainModelTest extends FunSuite {
       stockTrainModel.pipePythonFileWithScala(csvDataDF, pythonFile)
     assert(pipedData != resultRDD)
   }
+
   test("givenWrongPathToPipeShouldThrowAnExceptionPipeFunction") {
     val thrown = intercept[Exception] {
       stockTrainModel.pipePythonFileWithScala(csvDataDF, wrongPath)
     }
     assert(thrown.getMessage === "Please Verify the Path and Pass Valid one")
   }
+
   test("givenFilePathToUploadItToS3WhenSuccessFullShouldReturn1") {
     val resultData = stockTrainModel.uploadFile(pythonFile, "test-stock-bucket")
     assert(resultData === 1)
   }
+
   //test("givenFilePathToUploadWhenNotSuccessFulShouldReturn-1") {
   //val resultData = stockTrainModel.uploadFile(pythonFile, "test-stock-bucket")
   // assert(resultData === -1)
   //}
+
   test("givenWrongFilePathShouldThrownAnExceptionInUploadFunction") {
     val thrown = intercept[Exception] {
       stockTrainModel.uploadFile(wrongPath, "test-bucket-stock")

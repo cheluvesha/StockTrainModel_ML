@@ -4,6 +4,7 @@ import org.apache.spark.SparkContext
 
 /***
   * Case class which configures Aws S3 as FileSystem with Key and ID
+  * Dependencies included s3a
   * @param sparkContextObj SparkContext Type
   */
 case class Configuration(sparkContextObj: SparkContext) {
