@@ -58,7 +58,6 @@ object UtilityClass {
         val status = checkBucketExistsOrNot(bucketName)
         if (status) {
           val bucketToPut: Bucket = bucket(bucketName).last
-          println(bucketToPut)
           s3.putObject(
             bucketToPut,
             "StockPriceModel.pkl",

@@ -33,7 +33,7 @@ class StockTrainModelTest extends FunSuite {
     val dataFrameCompare = new DataFrameComparison
     assert(dataFrameCompare.compareDataFrames(csvDataDF, stockDF) === false)
   }
-  test("givenWrongPathShouldThrownAnException") {
+  test("givenWrongPathShouldThrownAnExceptionReadFunction") {
     val thrown = intercept[Exception] {
       stockTrainModel.readFileFromS3(wrongPath)
     }
@@ -54,7 +54,7 @@ class StockTrainModelTest extends FunSuite {
       stockTrainModel.pipePythonFileWithScala(csvDataDF, pythonFile)
     assert(pipedData != resultRDD)
   }
-  test("givenWrongPathToPipeShouldThrowAnException") {
+  test("givenWrongPathToPipeShouldThrowAnExceptionPipeFunction") {
     val thrown = intercept[Exception] {
       stockTrainModel.pipePythonFileWithScala(csvDataDF, wrongPath)
     }
@@ -64,9 +64,15 @@ class StockTrainModelTest extends FunSuite {
     val resultData = stockTrainModel.uploadFile(pythonFile, "test-stock-bucket")
     assert(resultData === 1)
   }
-  test("givenFilePathToUploadWhenNotSuccessFulShouldReturn-1") {
-    val resultData = stockTrainModel.uploadFile(pythonFile, "test-stock-bucket")
-    assert(resultData === -1)
+  //test("givenFilePathToUploadWhenNotSuccessFulShouldReturn-1") {
+  //val resultData = stockTrainModel.uploadFile(pythonFile, "test-stock-bucket")
+  // assert(resultData === -1)
+  //}
+  test("givenWrongFilePathShouldThrownAnExceptionInUploadFunction") {
+    val thrown = intercept[Exception] {
+      stockTrainModel.uploadFile(wrongPath, "test-bucket-stock")
+    }
+    assert(thrown.getMessage === "Please Check the Path, Upload is Failed")
   }
 
 }
