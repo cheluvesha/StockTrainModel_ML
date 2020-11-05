@@ -81,11 +81,6 @@ class StockTrainModelTest
     assert(resultData === 1)
   }
 
-  //test("givenFilePathToUploadWhenNotSuccessFulShouldReturn-1") {
-  //val resultData = stockTrainModel.uploadFile(pythonFile, "test-stock-bucket")
-  // assert(resultData === -1)
-  //}
-
   test("givenWrongFilePathShouldThrownAnExceptionInUploadFunction") {
     val thrown = intercept[Exception] {
       stockTrainModel.uploadFile(wrongPath, "test-bucket-stock")
