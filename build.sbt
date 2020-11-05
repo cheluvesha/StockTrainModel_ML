@@ -20,3 +20,5 @@ libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "2.7.3" excludeAll (
 )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % Test
+
+libraryDependencies += "org.mockito" % "mockito-all" % "1.9.5" % Test
