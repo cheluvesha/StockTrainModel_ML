@@ -28,16 +28,35 @@ object UtilityClass {
     spark
   }
 
+  /***
+    * Checks the File Path Valid or Not
+    * @param filePath  String
+    * @return Boolean
+    */
   def checkFilePathValidOrNot(filePath: String): Boolean = {
     val file = new File(filePath)
     file.exists()
   }
 
+  /***
+    * Checks Bucket Exists in S3
+    * @param bucket Bucket
+    * @return Boolean
+    */
   def checkBucketExistsOrNot(bucket: String): Boolean =
     s3.doesBucketExistV2(bucket)
 
+  /***
+    * Creates Bucket in AWS S3
+    * @return Bucket - Bucket Which Created
+    */
   def createBucket(): Bucket = s3.createBucket(bucketName)
 
+  /***
+    * Extract the file from Directory
+    * @param directoryPath - String
+    * @return String
+    */
   def extractFile(directoryPath: String): String = {
     val directory = new File(directoryPath)
     val dirList = directory.listFiles()
@@ -52,7 +71,6 @@ object UtilityClass {
 
   /***
     * Uploads Pickle file to AWS S3
-    *
     * @param filePath path where pickle file is stored
     */
   def uploadTrainedModelToS3(filePath: String): Unit = {
