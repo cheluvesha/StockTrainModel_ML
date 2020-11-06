@@ -85,7 +85,7 @@ object StockTrainModel extends App {
         sparkSession.emptyDataFrame
     }
   }
-  // creates column with required input and output fields
+  // creates vector column with required multiple columns
   def vectorAssembler(): VectorAssembler = {
     new VectorAssembler()
       .setInputCols(
