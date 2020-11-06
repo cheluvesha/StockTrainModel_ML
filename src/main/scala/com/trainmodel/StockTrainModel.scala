@@ -14,8 +14,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 object StockTrainModel {
   val sparkSession: SparkSession =
     UtilityClass.createSparkSessionObject("StockTrainModel")
-  val awsAccessKeyID: String = System.getenv("AWS_ACCESS_KEY_ID")
-  val awsSecretAccessKey: String = System.getenv("AWS_SECRET_ACCESS_KEY")
+  val awsConfiguration = new AWSConfiguration
 
   /***
     * Reads CSV file and Creates DataFrame
@@ -24,8 +23,8 @@ object StockTrainModel {
     */
   def readFileFromS3(filePath: String): DataFrame = {
     try {
-      val status = Configuration(sparkSession.sparkContext)
-        .hadoopAwsConfiguration(awsAccessKeyID, awsSecretAccessKey)
+      val status = Configuration(sparkSession.sparkContext, awsConfiguration)
+        .hadoopAwsConfiguration()
       var csvDataDF = sparkSession.emptyDataFrame
       if (status == 1) {
         csvDataDF = sparkSession.read

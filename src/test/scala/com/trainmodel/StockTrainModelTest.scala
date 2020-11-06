@@ -89,31 +89,29 @@ class StockTrainModelTest
   }
 
   test("givenConfigureCredentialsShouldVerifyByMocking") {
-    val service = mock[Configure]
+    val serviceMock = mock[AWSConfiguration]
     when(
-      service.hadoopAwsConfiguration(
+      serviceMock.connectToS3(
         System.getenv("AWS_ACCESS_KEY_ID"),
-        System.getenv("AWS_SECRET_ACCESS_KEY")
+        System.getenv("AWS_SECRET_ACCESS_KEY"),
+        sparkSession.sparkContext
       )
     ).thenReturn(1)
+    val result =
+      Configuration(sparkSession.sparkContext, serviceMock)
+        .hadoopAwsConfiguration()
+    assert(1 === result)
+  }
+
+  test("givenConfigureCredentialsShouldVerifyByMocking1") {
+    val serviceMock = mock[AWSConfiguration]
     when(
-      service.hadoopAwsConfiguration(
-        "123456",
-        "658"
-      )
-    ).thenReturn(-1)
-
-    val realCred = service.hadoopAwsConfiguration(
-      System.getenv("AWS_ACCESS_KEY_ID"),
-      System.getenv("AWS_SECRET_ACCESS_KEY")
-    )
-    val fakeCred = service.hadoopAwsConfiguration(
-      "123456",
-      "658"
-    )
-
-    // (4) verify the results
-    assert(realCred === 1)
-    assert(fakeCred === -1)
+      Configuration(sparkSession.sparkContext, serviceMock)
+        .hadoopAwsConfiguration()
+    ).thenReturn(1)
+    val awsConfiguration = new AWSConfiguration
+    val result = Configuration(sparkSession.sparkContext, awsConfiguration)
+      .hadoopAwsConfiguration()
+    assert(result === 1)
   }
 }
