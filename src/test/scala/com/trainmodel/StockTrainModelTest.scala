@@ -103,15 +103,4 @@ class StockTrainModelTest
     assert(1 === result)
   }
 
-  test("givenConfigureCredentialsShouldVerifyByMocking1") {
-    val serviceMock = mock[AWSConfiguration]
-    when(
-      Configuration(sparkSession.sparkContext, serviceMock)
-        .hadoopAwsConfiguration()
-    ).thenReturn(1)
-    val awsConfiguration = new AWSConfiguration
-    val result = Configuration(sparkSession.sparkContext, awsConfiguration)
-      .hadoopAwsConfiguration()
-    assert(result === 1)
-  }
 }
