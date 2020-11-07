@@ -80,8 +80,8 @@ object StockTrainModel {
     */
   def main(args: Array[String]): Unit = {
     try {
-      val bucketName = args(0)
-      val fileName = args(1)
+      val bucketName = "stockdata-spark-fellowship"
+      val fileName = "GOOG.csv"
       val path: String = "s3a://" + bucketName + "/" + fileName
       val bucketToStorePKL = "stock-trained-model"
       val readFileDF: DataFrame = readFileFromS3(path)
